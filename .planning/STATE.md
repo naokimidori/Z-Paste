@@ -2,7 +2,7 @@
 
 ## 当前阶段
 
-**Phase:** 1 - 项目基础架构 🚧 进行中
+**Phase:** 1 - 项目基础架构 ✅ 已完成
 
 **时间：** 2026-03-17
 
@@ -13,7 +13,7 @@
 | 0. 项目初始化 | ✅ 完成 | 创建 PROJECT.md, config.json, STATE.md |
 | 1. 需求分析 | ✅ 完成 | 创建 REQUIREMENTS.md, ROADMAP.md |
 | 2. 路线图 | ✅ 完成 | ROADMAP.md 已创建 |
-| 3. 执行 | 🚧 进行中 | Plan 05 完成：ExclusionService 应用排除逻辑 |
+| 3. 执行 | ✅ 完成 | Phase 1 所有计划完成，验证通过 |
 
 ## 当前计划进度
 
@@ -21,8 +21,11 @@
 - [x] 01-project-foundation-01 — 创建 Xcode 项目结构 ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-02 — ClipboardItem 数据模型 ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-03 — ClipboardService 和 DatabaseService ✅ (SUMMARY.md 已创建)
-- [x] 01-project-foundation-04 — HotkeyService 全局快捷键
+- [x] 01-project-foundation-04 — HotkeyService 全局快捷键 ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-05 — 应用排除逻辑 ✅ (SUMMARY.md 已创建)
+
+**验证状态：** ✅ passed (4/4 must-haves verified)
+**验证报告：** `.planning/phases/01-project-foundation/01-VERIFICATION.md`
 
 ## 上下文恢复
 
@@ -44,8 +47,10 @@
 - 使用 CryptoKit 进行 SHA256 哈希（而非 CommonCrypto）
 - 数据库扩展代码分离到独立文件
 - 使用 Timer 轮询监听剪贴板（而非 NSPasteboard.changedNotification）
-- KeyboardShortcuts 库推迟到 Plan 04 使用
+- KeyboardShortcuts 库已集成并启用
 - 默认排除列表包含主流密码管理器（1Password, Bitwarden, LastPass, Dashlane, Keychain）
 
 ### 下一步
-Phase 1 所有计划已完成，等待后续阶段规划
+Phase 1 已完成，准备进入 Phase 2: 主界面实现
+
+`/gsd:plan-phase 2` — 规划 Phase 2 主界面实现

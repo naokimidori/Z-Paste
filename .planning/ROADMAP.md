@@ -7,16 +7,19 @@
 **Plans:** 5 plans
 
 **Plans:**
-- [x] 01-project-foundation-01-PLAN.md — 创建 Xcode 项目结构和 SPM 依赖配置
+- [x] 01-project-foundation-01-PLAN.md — 创建 Xcode 项目结构和 SPM 依赖配置 ✅
 - [x] 01-project-foundation-02-PLAN.md — 创建 ClipboardItem 数据模型 ✅
 - [x] 01-project-foundation-03-PLAN.md — 实现 ClipboardService 和 DatabaseService 核心服务 ✅
 - [x] 01-project-foundation-04-PLAN.md — 实现 HotkeyService 全局快捷键服务 ✅
 - [x] 01-project-foundation-05-PLAN.md — 实现应用排除逻辑 ✅
 
 **验证标准：**
-- [ ] 能正确捕获剪贴板变化
-- [ ] 数据持久化到 SQLite
-- [ ] 快捷键唤起窗口
+- [x] 能正确捕获剪贴板变化 ✅
+- [x] 数据持久化到 SQLite ✅
+- [x] 快捷键唤起窗口 ✅
+
+**完成日期：** 2026-03-17
+**验证报告：** `.planning/phases/01-project-foundation/01-VERIFICATION.md`
 
 ---
 
