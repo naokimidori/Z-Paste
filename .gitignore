@@ -1,0 +1,126 @@
+# Xcode
+#
+# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+
+## User settings
+xcuserdata/
+
+## compatibility with Xcode 8 and earlier (Objective-C or Swift)
+*.xcscmblueprint
+*.xccheckout
+
+## compatibility with Xcode 3 and earlier (Objective-C)
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.pbxuser
+!default.pbxuser
+*.suffix
+!default.suffix
+
+## Obj-C/Swift specific
+*.hmap
+*.injection.conf
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+#
+# Add this line if you want to avoid checking in source code from SPM dependencies.
+# Packages/
+# Package.pins
+# Package.resolved
+# *.xcodeproj
+#
+# Xcode automatically generates this directory with a hierarchical structure
+# when you add SPM packages to your project. Only commit it if necessary.
+.swiftpm/
+.build/
+
+# CocoaPods
+#
+# Add this line if you want to avoid checking in source code from CocoaPods dependencies.
+# Pods/
+# *.xcworkspace
+# !default.xcworkspace
+
+# Carthage
+#
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+# Carthage/Checkouts
+
+# Accio dependency management
+Dependencies/
+.accio/
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo.
+# Instead, use fastlane to re-generate the screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/#source-control
+
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Code Injection
+#
+# After new features introduced iOS 13, tvOS 13, macOS 10.15 the code injection has been deprecated
+# https://developer.apple.com/documentation/xcode_release_notes/xcode_11_release_notes
+# iOS Injection
+# DerivedData/
+# Mac Injection
+# build/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Xcode keychain
+*.keychain
+
+# Build directory
+DerivedData/
+build/
+
+# Planning directory (optional - uncomment if you want to exclude)
+# .planning/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
