@@ -23,14 +23,15 @@ extension ClipboardItem: TableRecord {
 extension ClipboardItem: FetchableRecord {
     /// 从数据库行读取
     init(row: Row) throws {
-        id = row[Columns.id]
-        content = row[Columns.content]
-        itemType = try row.decode(Columns.itemType)
-        sourceApp = row[Columns.sourceApp]
-        sourceAppIcon = row[Columns.sourceAppIcon]
-        createdAt = row[Columns.createdAt]
-        isFavorite = row[Columns.isFavorite]
-        data = row[Columns.data]
+        id = row["id"]
+        content = row["content"]
+        let itemTypeRaw: String = row["item_type"]
+        itemType = ItemType(rawValue: itemTypeRaw) ?? .text
+        sourceApp = row["source_app"]
+        sourceAppIcon = row["source_app_icon"]
+        createdAt = row["created_at"]
+        isFavorite = row["is_favorite"]
+        data = row["data"]
     }
 }
 
@@ -88,6 +89,6 @@ extension ClipboardItem {
 
     /// 删除表
     static func dropTable(db: Database) throws {
-        try db.drop(table: databaseTableName, ifExists: true)
+        try db.drop(table: databaseTableName)
     }
 }
