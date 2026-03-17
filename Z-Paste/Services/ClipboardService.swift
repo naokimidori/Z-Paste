@@ -7,6 +7,9 @@ class ClipboardService {
     /// 数据库服务
     private let database: DatabaseService
 
+    /// 排除服务
+    private let exclusionService = ExclusionService()
+
     /// 是否正在监听
     private var isMonitoring: Bool = false
 
@@ -18,9 +21,6 @@ class ClipboardService {
 
     /// 新项回调
     var onNewItem: ((ClipboardItem) -> Void)?
-
-    /// 排除的应用列表
-    var excludedApps: Set<String> = []
 
     /// 初始化剪贴板服务
     /// - Parameter database: 数据库服务实例
@@ -73,8 +73,10 @@ class ClipboardService {
         guard isMonitoring else { return }
 
         // 检查是否来自排除的应用
-        if let frontApp = NSWorkspace.shared.frontmostApplication?.bundleIdentifier,
-           excludedApps.contains(frontApp) {
+        if exclusionService.isExcluded() {
+            if let bundleID = exclusionService.getCurrentAppBundleID() {
+                print("ClipboardService: 跳过排除应用的剪贴板 - \(bundleID)")
+            }
             return
         }
 
@@ -181,24 +183,4 @@ class ClipboardService {
         return bitmap.representation(using: .png, properties: [:])
     }
 
-    // MARK: - App Exclusion
-
-    /// 添加排除应用
-    /// - Parameter bundleID: 应用 Bundle ID
-    func addExcludedApp(_ bundleID: String) {
-        excludedApps.insert(bundleID)
-    }
-
-    /// 移除排除应用
-    /// - Parameter bundleID: 应用 Bundle ID
-    func removeExcludedApp(_ bundleID: String) {
-        excludedApps.remove(bundleID)
-    }
-
-    /// 检查应用是否被排除
-    /// - Parameter bundleID: 应用 Bundle ID
-    /// - Returns: 是否被排除
-    func isAppExcluded(_ bundleID: String) -> Bool {
-        return excludedApps.contains(bundleID)
-    }
 }
