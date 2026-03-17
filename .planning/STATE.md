@@ -27,7 +27,7 @@
 
 **Phase 2 Plans:**
 - [x] 02-main-interface-02 — ClipboardCardView 卡片组件 ✅ (SUMMARY.md 已创建)
-- [ ] 02-main-interface-03 — 待执行
+- [x] 02-main-interface-03 — CardListView 和 ClipboardViewModel ✅ (SUMMARY.md 已创建)
 - [ ] 02-main-interface-04 — 待执行
 - [ ] 02-main-interface-05 — 待执行
 
@@ -59,6 +59,9 @@
 - Card size locked at 250x250px as specified in UI-SPEC.md (Phase 2)
 - Three-section layout: header (type label + favorite), content preview, footer (app icon + timestamp + size) (Phase 2)
 - Glass morphism background using .ultraThinMaterial (Phase 2)
+- LazyHStack for horizontal scrolling with 12px card spacing (Phase 2)
+- Wrap-around keyboard navigation (Phase 2)
+- Safe array subscript extension for bounds checking (Phase 2)
 
 ### 下一步
-继续执行 Phase 2 计划：CardListView 和 MainWindowView 组件
+继续执行 Phase 2 计划：MainWindowView 组件
