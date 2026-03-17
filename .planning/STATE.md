@@ -13,15 +13,15 @@
 | 0. 项目初始化 | ✅ 完成 | 创建 PROJECT.md, config.json, STATE.md |
 | 1. 需求分析 | ✅ 完成 | 创建 REQUIREMENTS.md, ROADMAP.md |
 | 2. 路线图 | ✅ 完成 | ROADMAP.md 已创建 |
-| 3. 执行 | 🚧 进行中 | Plan 04 完成：HotkeyService 全局快捷键 |
+| 3. 执行 | 🚧 进行中 | Plan 03 完成：ClipboardService 和 DatabaseService |
 
 ## 当前计划进度
 
 **Phase 1 Plans:**
 - [x] 01-project-foundation-01 — 创建 Xcode 项目结构 ✅ (SUMMARY.md 已创建)
-- [x] 01-project-foundation-02 — ClipboardItem 数据模型 ✅
-- [ ] 01-project-foundation-03 — ClipboardService 和 DatabaseService
-- [x] 01-project-foundation-04 — HotkeyService 全局快捷键 ✅ (SUMMARY.md 已创建)
+- [x] 01-project-foundation-02 — ClipboardItem 数据模型 ✅ (SUMMARY.md 已创建)
+- [x] 01-project-foundation-03 — ClipboardService 和 DatabaseService ✅ (SUMMARY.md 已创建)
+- [ ] 01-project-foundation-04 — HotkeyService 全局快捷键
 - [ ] 01-project-foundation-05 — 应用排除逻辑
 
 ## 上下文恢复
@@ -43,7 +43,8 @@
 ### 最新决策
 - 使用 CryptoKit 进行 SHA256 哈希（而非 CommonCrypto）
 - 数据库扩展代码分离到独立文件
-- 使用 KeyboardShortcuts 库实现全局快捷键
+- 使用 Timer 轮询监听剪贴板（而非 NSPasteboard.changedNotification）
+- KeyboardShortcuts 库推迟到 Plan 04 使用
 
 ### 下一步
-继续执行 Plan 03：实现 ClipboardService 和 DatabaseService 核心服务
+继续执行 Plan 04：实现 HotkeyService 全局快捷键服务
