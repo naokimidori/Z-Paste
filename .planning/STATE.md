@@ -18,7 +18,7 @@
 ## 当前计划进度
 
 **Phase 1 Plans:**
-- [x] 01-project-foundation-01 — 创建 Xcode 项目结构
+- [x] 01-project-foundation-01 — 创建 Xcode 项目结构 ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-02 — ClipboardItem 数据模型 ✅
 - [ ] 01-project-foundation-03 — ClipboardService 和 DatabaseService
 - [ ] 01-project-foundation-04 — HotkeyService 全局快捷键
