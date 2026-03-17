@@ -10,8 +10,8 @@
 - [x] 01-project-foundation-01-PLAN.md — 创建 Xcode 项目结构和 SPM 依赖配置
 - [x] 01-project-foundation-02-PLAN.md — 创建 ClipboardItem 数据模型 ✅
 - [x] 01-project-foundation-03-PLAN.md — 实现 ClipboardService 和 DatabaseService 核心服务 ✅
-- [ ] 01-project-foundation-04-PLAN.md — 实现 HotkeyService 全局快捷键服务
-- [ ] 01-project-foundation-05-PLAN.md — 实现应用排除逻辑
+- [x] 01-project-foundation-04-PLAN.md — 实现 HotkeyService 全局快捷键服务 ✅
+- [x] 01-project-foundation-05-PLAN.md — 实现应用排除逻辑 ✅
 
 **验证标准：**
 - [ ] 能正确捕获剪贴板变化

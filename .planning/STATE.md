@@ -13,7 +13,7 @@
 | 0. 项目初始化 | ✅ 完成 | 创建 PROJECT.md, config.json, STATE.md |
 | 1. 需求分析 | ✅ 完成 | 创建 REQUIREMENTS.md, ROADMAP.md |
 | 2. 路线图 | ✅ 完成 | ROADMAP.md 已创建 |
-| 3. 执行 | 🚧 进行中 | Plan 03 完成：ClipboardService 和 DatabaseService |
+| 3. 执行 | 🚧 进行中 | Plan 05 完成：ExclusionService 应用排除逻辑 |
 
 ## 当前计划进度
 
@@ -21,8 +21,8 @@
 - [x] 01-project-foundation-01 — 创建 Xcode 项目结构 ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-02 — ClipboardItem 数据模型 ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-03 — ClipboardService 和 DatabaseService ✅ (SUMMARY.md 已创建)
-- [ ] 01-project-foundation-04 — HotkeyService 全局快捷键
-- [ ] 01-project-foundation-05 — 应用排除逻辑
+- [x] 01-project-foundation-04 — HotkeyService 全局快捷键
+- [x] 01-project-foundation-05 — 应用排除逻辑 ✅ (SUMMARY.md 已创建)
 
 ## 上下文恢复
 
@@ -45,6 +45,7 @@
 - 数据库扩展代码分离到独立文件
 - 使用 Timer 轮询监听剪贴板（而非 NSPasteboard.changedNotification）
 - KeyboardShortcuts 库推迟到 Plan 04 使用
+- 默认排除列表包含主流密码管理器（1Password, Bitwarden, LastPass, Dashlane, Keychain）
 
 ### 下一步
-继续执行 Plan 04：实现 HotkeyService 全局快捷键服务
+Phase 1 所有计划已完成，等待后续阶段规划
