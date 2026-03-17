@@ -4,16 +4,14 @@
 
 **目标：** 建立项目结构和核心服务
 
-### 任务列表
+**Plans:** 5 plans
 
-| ID | 任务 | 优先级 |
-|----|------|--------|
-| 1.1 | 创建 Xcode 项目和基础目录结构 | P0 |
-| 1.2 | 实现 ClipboardService - 剪贴板监听 | P0 |
-| 1.3 | 实现 StorageService - SQLite 存储 | P0 |
-| 1.4 | 实现 HotkeyService - 全局快捷键 | P0 |
-| 1.5 | 创建数据模型 ClipboardItem | P0 |
-| 1.6 | 实现应用排除逻辑 | P1 |
+**Plans:**
+- [ ] 01-project-foundation-01-PLAN.md — 创建 Xcode 项目结构和 SPM 依赖配置
+- [ ] 01-project-foundation-02-PLAN.md — 创建 ClipboardItem 数据模型
+- [ ] 01-project-foundation-03-PLAN.md — 实现 ClipboardService 和 DatabaseService 核心服务
+- [ ] 01-project-foundation-04-PLAN.md — 实现 HotkeyService 全局快捷键服务
+- [ ] 01-project-foundation-05-PLAN.md — 实现应用排除逻辑
 
 **验证标准：**
 - [ ] 能正确捕获剪贴板变化
