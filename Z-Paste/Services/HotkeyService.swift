@@ -34,5 +34,5 @@ class HotkeyService {
 
 extension KeyboardShortcuts.Name {
     /// 切换窗口显示的快捷键
-    static let toggleWindow = Self("toggleWindow", default: .init(.backquote, modifiers: .option))
+    static let toggleWindow = Self("toggleWindow", default: .init(.backtick, modifiers: .option))
 }

@@ -4,7 +4,7 @@
 	classes = {
 	};
 	objectVersion = 56;
-	buildConfigurationList = 5A18F5D629F5A1F50029C3A1 /* PBXProject */;
+	buildConfigurationList = 5A18F5D629F5A1F50029C3A1;
 	compatibilityVersion = "Xcode 14.0";
 	developmentRegion = en;
 	hasScannedForEncodings = 0;
@@ -13,23 +13,33 @@
 		Base,
 	);
 	mainGroup = 5A18F5D029F5A1F50029C3A1;
-	productRefGroup = 5A18F5DA29F5A1F50029C3A1 /* Products */;
+	productRefGroup = 5A18F5DA29F5A1F50029C3A1;
 	projectDirPath = "";
 	projectRoot = "";
-	rootObject = 5A18F5D329F5A1F50029C3A1 /* Project object */;
-}
-
+	rootObject = 5A18F5D329F5A1F50029C3A1;
 /* Begin PBXBuildFile section */
 	5A18F5E729F5A1F50029C3A1 /* Z_PasteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A18F5E629F5A1F50029C3A1 /* Z_PasteApp.swift */; };
 	5A18F5E929F5A1F50029C3A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A18F5E829F5A1F50029C3A1 /* AppDelegate.swift */; };
+	5A00000129F5A1F50029C3A1 /* ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A00000029F5A1F50029C3A1 /* ClipboardItem.swift */; };
+	5A00000329F5A1F50029C3A1 /* ClipboardItem+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A00000229F5A1F50029C3A1 /* ClipboardItem+Database.swift */; };
+	5A00000529F5A1F50029C3A1 /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A00000429F5A1F50029C3A1 /* ClipboardService.swift */; };
+	5A00000729F5A1F50029C3A1 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A00000629F5A1F50029C3A1 /* DatabaseService.swift */; };
+	5A00000929F5A1F50029C3A1 /* HotkeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A00000829F5A1F50029C3A1 /* HotkeyService.swift */; };
+	5A00000B29F5A1F50029C3A1 /* ExclusionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A00000A29F5A1F50029C3A1 /* ExclusionService.swift */; };
+	5A00000D29F5A1F50029C3A1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A00000C29F5A1F50029C3A1 /* ContentView.swift */; };
 /* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 	5A18F5D729F5A1F50029C3A1 /* Z-Paste.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Z-Paste.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 	5A18F5E629F5A1F50029C3A1 /* Z_PasteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z_PasteApp.swift; sourceTree = "<group>"; };
 	5A18F5E829F5A1F50029C3A1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+	5A00000029F5A1F50029C3A1 /* ClipboardItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItem.swift; sourceTree = "<group>"; };
+	5A00000229F5A1F50029C3A1 /* ClipboardItem+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClipboardItem+Database.swift"; sourceTree = "<group>"; };
+	5A00000429F5A1F50029C3A1 /* ClipboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
+	5A00000629F5A1F50029C3A1 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
+	5A00000829F5A1F50029C3A1 /* HotkeyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyService.swift; sourceTree = "<group>"; };
+	5A00000A29F5A1F50029C3A1 /* ExclusionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExclusionService.swift; sourceTree = "<group>"; };
+	5A00000C29F5A1F50029C3A1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
 /* Begin PBXFrameworksBuildPhase section */
 	5A18F5D429F5A1F50029C3A1 /* Frameworks */ = {
 		isa = PBXFrameworksBuildPhase;
@@ -39,7 +49,6 @@
 		runOnlyForDeploymentPostprocessing = 0;
 	};
 /* End PBXFrameworksBuildPhase section */
-
 /* Begin PBXGroup section */
 	5A18F5D029F5A1F50029C3A1 = {
 		isa = PBXGroup;
@@ -54,8 +63,29 @@
 		children = (
 			5A18F5E629F5A1F50029C3A1 /* Z_PasteApp.swift */,
 			5A18F5E829F5A1F50029C3A1 /* AppDelegate.swift */,
+			5A00000C29F5A1F50029C3A1 /* ContentView.swift */,
 		);
 		path = App;
+		sourceTree = "<group>";
+	};
+	5A00001029F5A1F50029C3A1 /* Models */ = {
+		isa = PBXGroup;
+		children = (
+			5A00000029F5A1F50029C3A1 /* ClipboardItem.swift */,
+			5A00000229F5A1F50029C3A1 /* ClipboardItem+Database.swift */,
+		);
+		path = Models;
+		sourceTree = "<group>";
+	};
+	5A00001129F5A1F50029C3A1 /* Services */ = {
+		isa = PBXGroup;
+		children = (
+			5A00000429F5A1F50029C3A1 /* ClipboardService.swift */,
+			5A00000629F5A1F50029C3A1 /* DatabaseService.swift */,
+			5A00000829F5A1F50029C3A1 /* HotkeyService.swift */,
+			5A00000A29F5A1F50029C3A1 /* ExclusionService.swift */,
+		);
+		path = Services;
 		sourceTree = "<group>";
 	};
 	5A18F5DA29F5A1F50029C3A1 /* Products */ = {
@@ -70,16 +100,17 @@
 		isa = PBXGroup;
 		children = (
 			5A18F5D929F5A1F50029C3A1 /* App */,
+			5A00001029F5A1F50029C3A1 /* Models */,
+			5A00001129F5A1F50029C3A1 /* Services */,
 		);
 		path = "Z-Paste";
 		sourceTree = "<group>";
 	};
 /* End PBXGroup section */
-
 /* Begin PBXNativeTarget section */
 	5A18F5D629F5A1F50029C3A1 /* Z-Paste */ = {
 		isa = PBXNativeTarget;
-		buildConfigurationList = 5A18F5F329F5A1F50029C3A1 /* Build configuration list for PBXNativeTarget "Z-Paste" */;
+		buildConfigurationList = 5A18F5F329F5A1F50029C3A1;
 		buildPhases = (
 			5A18F5D529F5A1F50029C3A1 /* Sources */,
 			5A18F5D429F5A1F50029C3A1 /* Frameworks */,
@@ -95,7 +126,6 @@
 		productType = "com.apple.product-type.application";
 	};
 /* End PBXNativeTarget section */
-
 /* Begin PBXProject section */
 	5A18F5D329F5A1F50029C3A1 /* Project object */ = {
 		isa = PBXProject;
@@ -109,7 +139,7 @@
 				};
 			};
 		};
-		buildConfigurationList = 5A18F5D629F5A1F50029C3A1 /* PBXProject */;
+		buildConfigurationList = 5A18F5D629F5A1F50029C3A1;
 		compatibilityVersion = "Xcode 14.0";
 		developmentRegion = en;
 		hasScannedForEncodings = 0;
@@ -118,15 +148,14 @@
 			Base,
 		);
 		mainGroup = 5A18F5D029F5A1F50029C3A1;
-		productRefGroup = 5A18F5DA29F5A1F50029C3A1 /* Products */;
+		productRefGroup = 5A18F5DA29F5A1F50029C3A1;
 		projectDirPath = "";
 		projectRoot = "";
 		targets = (
-			5A18F5D629F5A1F50029C3A1 /* Z-Paste */,
+			5A18F5D629F5A1F50029C3A1,
 		);
 	};
 /* End PBXProject section */
-
 /* Begin PBXResourcesBuildPhase section */
 	5A18F5D329F5A1F50029C3A1 /* Resources */ = {
 		isa = PBXResourcesBuildPhase;
@@ -136,7 +165,6 @@
 		runOnlyForDeploymentPostprocessing = 0;
 	};
 /* End PBXResourcesBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 	5A18F5D529F5A1F50029C3A1 /* Sources */ = {
 		isa = PBXSourcesBuildPhase;
@@ -144,11 +172,17 @@
 		files = (
 			5A18F5E929F5A1F50029C3A1 /* AppDelegate.swift in Sources */,
 			5A18F5E729F5A1F50029C3A1 /* Z_PasteApp.swift in Sources */,
+			5A00000129F5A1F50029C3A1 /* ClipboardItem.swift in Sources */,
+			5A00000329F5A1F50029C3A1 /* ClipboardItem+Database.swift in Sources */,
+			5A00000529F5A1F50029C3A1 /* ClipboardService.swift in Sources */,
+			5A00000729F5A1F50029C3A1 /* DatabaseService.swift in Sources */,
+			5A00000929F5A1F50029C3A1 /* HotkeyService.swift in Sources */,
+			5A00000B29F5A1F50029C3A1 /* ExclusionService.swift in Sources */,
+			5A00000D29F5A1F50029C3A1 /* ContentView.swift in Sources */,
 		);
 		runOnlyForDeploymentPostprocessing = 0;
 	};
 /* End PBXSourcesBuildPhase section */
-
 /* Begin XCBuildConfiguration section */
 	5A18F5F129F5A1F50029C3A1 /* Debug */ = {
 		isa = XCBuildConfiguration;
@@ -210,6 +244,7 @@
 			SDKROOT = macosx;
 			SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 			SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			SWIFT_VERSION = 5.0;
 		};
 		name = Debug;
 	};
@@ -264,6 +299,7 @@
 			SDKROOT = macosx;
 			SWIFT_COMPILATION_MODE = wholemodule;
 			SWIFT_OPTIMIZATION_LEVEL = "-O";
+			SWIFT_VERSION = 5.0;
 		};
 		name = Release;
 	};
@@ -322,13 +358,12 @@
 		name = Release;
 	};
 /* End XCBuildConfiguration section */
-
 /* Begin XCConfigurationList section */
 	5A18F5D629F5A1F50029C3A1 /* PBXProject */ = {
 		isa = XCConfigurationList;
 		buildConfigurations = (
-			5A18F5F129F5A1F50029C3A1 /* Debug */,
-			5A18F5F229F5A1F50029C3A1 /* Release */,
+			5A18F5F129F5A1F50029C3A1,
+			5A18F5F229F5A1F50029C3A1,
 		);
 		defaultConfigurationIsVisible = 0;
 		defaultConfigurationName = Release;
@@ -336,11 +371,10 @@
 	5A18F5F329F5A1F50029C3A1 /* Build configuration list for PBXNativeTarget "Z-Paste" */ = {
 		isa = XCConfigurationList;
 		buildConfigurations = (
-			5A18F5F429F5A1F50029C3A1 /* Debug */,
-			5A18F5F529F5A1F50029C3A1 /* Release */,
+			5A18F5F429F5A1F50029C3A1,
+			5A18F5F529F5A1F50029C3A1,
 		);
 		defaultConfigurationIsVisible = 0;
 		defaultConfigurationName = Release;
 	};
 /* End XCConfigurationList section */
-}

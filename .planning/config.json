@@ -6,7 +6,8 @@
   "workflow": {
     "auto_mode": true,
     "research_enabled": true,
-    "ui_design": true
+    "ui_design": true,
+    "_auto_chain_active": false
   },
   "features": {
     "clipboard_history": true,
