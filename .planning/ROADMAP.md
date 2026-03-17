@@ -27,6 +27,14 @@
 
 **目标：** 实现底部弹窗和卡片列表
 
+**Plans:** 4 plans
+
+**Plans:**
+- [ ] 02-01-PLAN.md — WindowService 窗口管理和动画服务
+- [ ] 02-02-PLAN.md — ClipboardCardView 卡片组件及预览
+- [ ] 02-03-PLAN.md — CardListView 横向滚动列表和 ViewModel
+- [ ] 02-04-PLAN.md — MainWindowView 和 AppDelegate 集成
+
 ### 任务列表
 
 | ID | 任务 | 优先级 |
