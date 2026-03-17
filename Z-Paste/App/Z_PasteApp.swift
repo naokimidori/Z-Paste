@@ -10,5 +10,8 @@ struct Z_PasteApp: App {
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
+        .commands {
+            // 隐藏默认的命令
+        }
     }
 }

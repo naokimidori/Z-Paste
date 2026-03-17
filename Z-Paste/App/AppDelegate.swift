@@ -2,13 +2,22 @@ import AppKit
 import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
+    private let hotkeyService = HotkeyService()
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 应用启动配置
         configureApp()
+
+        // 注册全局快捷键
+        hotkeyService.register()
+        hotkeyService.onToggleWindow = { [weak self] in
+            self?.toggleWindow()
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         // 应用终止前清理资源
+        hotkeyService.unregister()
         cleanup()
     }
 
@@ -32,12 +41,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 清理资源
         print("Z-Paste 应用正在退出")
     }
-}
 
-// 简单的 ContentView 占位符
-struct ContentView: View {
-    var body: some View {
-        Text("Z-Paste - 剪贴板管理器")
-            .frame(width: 400, height: 200)
+    /// 切换窗口显示/隐藏
+    private func toggleWindow() {
+        print("HotkeyService: 触发窗口切换回调")
+        // TODO: 实现窗口显示/隐藏逻辑
     }
 }
