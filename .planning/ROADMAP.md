@@ -30,10 +30,10 @@
 **Plans:** 4 plans
 
 **Plans:**
-- [ ] 02-01-PLAN.md — WindowService 窗口管理和动画服务
-- [ ] 02-02-PLAN.md — ClipboardCardView 卡片组件及预览
-- [ ] 02-03-PLAN.md — CardListView 横向滚动列表和 ViewModel
-- [ ] 02-04-PLAN.md — MainWindowView 和 AppDelegate 集成
+- [x] 02-01-PLAN.md — WindowService 窗口管理和动画服务 ✅
+- [x] 02-02-PLAN.md — ClipboardCardView 卡片组件及预览 ✅
+- [x] 02-03-PLAN.md — CardListView 横向滚动列表和 ViewModel ✅
+- [x] 02-04-PLAN.md — MainWindowView 和 AppDelegate 集成 ✅
 
 ### 任务列表
 
@@ -47,9 +47,11 @@
 | 2.6 | 来源应用图标获取 | P1 |
 
 **验证标准：**
-- [ ] 底部弹窗流畅动画
-- [ ] 卡片正确显示内容预览
-- [ ] 支持横向滚动
+- [x] 底部弹窗流畅动画 ✅
+- [x] 卡片正确显示内容预览 ✅
+- [x] 支持横向滚动 ✅
+
+**完成日期：** 2026-03-18
 
 ---
 

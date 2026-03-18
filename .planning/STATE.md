@@ -2,9 +2,9 @@
 
 ## 当前阶段
 
-**Phase:** 2 - 主界面实现 🔄 进行中
+**Phase:** 3 - 交互功能 ⏭️ 待开始
 
-**时间：** 2026-03-17
+**时间：** 2026-03-18
 
 ## 阶段进度
 
@@ -14,7 +14,7 @@
 | 1. 需求分析 | ✅ 完成 | 创建 REQUIREMENTS.md, ROADMAP.md |
 | 2. 路线图 | ✅ 完成 | ROADMAP.md 已创建 |
 | 3. 执行 Phase 1 | ✅ 完成 | Phase 1 所有计划完成，验证通过 |
-| 4. 执行 Phase 2 | 🔄 进行中 | 卡片组件已完成 |
+| 4. 执行 Phase 2 | ✅ 完成 | 主界面弹窗、卡片列表与 AppDelegate 集成已完成 |
 
 ## 当前计划进度
 
@@ -26,12 +26,13 @@
 - [x] 01-project-foundation-05 — 应用排除逻辑 ✅ (SUMMARY.md 已创建)
 
 **Phase 2 Plans:**
+- [x] 02-main-interface-01 — WindowService 窗口管理和动画服务 ✅ (SUMMARY.md 已创建)
 - [x] 02-main-interface-02 — ClipboardCardView 卡片组件 ✅ (SUMMARY.md 已创建)
 - [x] 02-main-interface-03 — CardListView 和 ClipboardViewModel ✅ (SUMMARY.md 已创建)
-- [ ] 02-main-interface-04 — 待执行
-- [ ] 02-main-interface-05 — 待执行
+- [x] 02-main-interface-04 — MainWindowView 和 AppDelegate 集成 ✅ (SUMMARY.md 已创建)
 
 **验证状态：** Phase 1 ✅ passed (4/4 must-haves verified)
+**检查点：** Phase 2 02-04 已获用户手动验证 approved
 **验证报告：** `.planning/phases/01-project-foundation/01-VERIFICATION.md`
 
 ## 上下文恢复
@@ -62,6 +63,8 @@
 - LazyHStack for horizontal scrolling with 12px card spacing (Phase 2)
 - Wrap-around keyboard navigation (Phase 2)
 - Safe array subscript extension for bounds checking (Phase 2)
+- MainWindowView uses @StateObject ClipboardViewModel and reloads recent history on appear (Phase 2)
+- AppDelegate now composes WindowService, DatabaseService, ClipboardService, and MainWindowView via NSHostingController (Phase 2)
 
 ### 下一步
-继续执行 Phase 2 计划：MainWindowView 组件
+继续执行 Phase 3 计划：交互功能（粘贴、收藏、删除等）
