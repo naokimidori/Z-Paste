@@ -9,8 +9,8 @@ class HotkeyService {
 
     /// 初始化并注册快捷键回调
     init() {
-        // 注册快捷键按下事件
         KeyboardShortcuts.onKeyDown(for: .toggleWindow) { [weak self] in
+            print("Hotkey triggered: toggleWindow")
             self?.onToggleWindow?()
         }
     }
@@ -18,14 +18,19 @@ class HotkeyService {
     /// 注册快捷键
     /// 默认快捷键：Option + `
     func register() {
-        // KeyboardShortcuts 会在首次访问 .toggleWindow 时自动注册
-        // 确保快捷键名称已定义
-        _ = KeyboardShortcuts.Name.toggleWindow
+        if KeyboardShortcuts.getShortcut(for: .toggleWindow) == nil {
+            KeyboardShortcuts.setShortcut(.init(.backtick, modifiers: [.option]), for: .toggleWindow)
+        }
+
+        if let shortcut = KeyboardShortcuts.getShortcut(for: .toggleWindow) {
+            print("Hotkey registered: \(shortcut)")
+        } else {
+            print("Hotkey registration failed: no shortcut configured")
+        }
     }
 
     /// 注销快捷键
     func unregister() {
-        // 重置快捷键为 nil
         KeyboardShortcuts.reset(.toggleWindow)
     }
 }
@@ -34,5 +39,5 @@ class HotkeyService {
 
 extension KeyboardShortcuts.Name {
     /// 切换窗口显示的快捷键
-    static let toggleWindow = Self("toggleWindow", default: .init(.backtick, modifiers: .option))
+    static let toggleWindow = Self("toggleWindow")
 }

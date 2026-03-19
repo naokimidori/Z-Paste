@@ -3,50 +3,102 @@ import SwiftUI
 struct ClipboardCardView: View {
     let item: ClipboardItem
     let isSelected: Bool
+    let isMultiSelectMode: Bool
+    let isBatchSelected: Bool
     let onTap: (() -> Void)?
+    let onCopy: (() -> Void)?
+    let onToggleFavorite: (() -> Void)?
+    let onDelete: (() -> Void)?
+    let onContextMenuStateChanged: ((Bool) -> Void)?
 
-    init(item: ClipboardItem, isSelected: Bool = false, onTap: (() -> Void)? = nil) {
+    init(
+        item: ClipboardItem,
+        isSelected: Bool = false,
+        isMultiSelectMode: Bool = false,
+        isBatchSelected: Bool = false,
+        onTap: (() -> Void)? = nil,
+        onCopy: (() -> Void)? = nil,
+        onToggleFavorite: (() -> Void)? = nil,
+        onDelete: (() -> Void)? = nil,
+        onContextMenuStateChanged: ((Bool) -> Void)? = nil
+    ) {
         self.item = item
         self.isSelected = isSelected
+        self.isMultiSelectMode = isMultiSelectMode
+        self.isBatchSelected = isBatchSelected
         self.onTap = onTap
+        self.onCopy = onCopy
+        self.onToggleFavorite = onToggleFavorite
+        self.onDelete = onDelete
+        self.onContextMenuStateChanged = onContextMenuStateChanged
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Header: 类型标签 + 收藏标记
             headerView
-
-            // Content: 内容预览
             contentView
                 .frame(maxHeight: .infinity)
-
-            // Footer: 来源图标 + 时间戳 + 大小
             footerView
         }
-        .frame(width: 250, height: 250)  // 锁定尺寸
+        .frame(width: 250, height: 250)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
-        )
+        .overlay(cardOverlay)
         .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .contentShape(RoundedRectangle(cornerRadius: 12))
         .onTapGesture {
             onTap?()
         }
+        .contextMenu {
+            Button("复制") {
+                onContextMenuStateChanged?(false)
+                onCopy?()
+            }
+
+            Button(item.isFavorite ? "取消收藏" : "收藏") {
+                onContextMenuStateChanged?(false)
+                onToggleFavorite?()
+            }
+
+            Button("删除", role: .destructive) {
+                onContextMenuStateChanged?(false)
+                onDelete?()
+            }
+        }
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { isPressing in
+            onContextMenuStateChanged?(isPressing)
+        }, perform: {})
     }
 
-    // MARK: - Header
+    private var cardOverlay: some View {
+        RoundedRectangle(cornerRadius: 12)
+            .stroke(borderColor, lineWidth: 2)
+            .overlay(alignment: .topTrailing) {
+                if isMultiSelectMode {
+                    Image(systemName: isBatchSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.title3)
+                        .foregroundColor(isBatchSelected ? .accentColor : .secondary.opacity(0.7))
+                        .padding(10)
+                }
+            }
+    }
+
+    private var borderColor: Color {
+        if isBatchSelected {
+            return .accentColor
+        }
+
+        return isSelected ? .accentColor : .clear
+    }
+
     private var headerView: some View {
         HStack {
-            // 类型标签
             Text(typeLabel)
                 .font(.caption)
                 .foregroundColor(.secondary)
 
             Spacer()
 
-            // 收藏标记
             if item.isFavorite {
                 Image(systemName: "star.fill")
                     .font(.caption)
@@ -56,7 +108,6 @@ struct ClipboardCardView: View {
         .padding(8)
     }
 
-    // MARK: - Content
     @ViewBuilder
     private var contentView: some View {
         switch item.itemType {
@@ -69,10 +120,8 @@ struct ClipboardCardView: View {
         }
     }
 
-    // MARK: - Footer
     private var footerView: some View {
         HStack(spacing: 4) {
-            // 来源应用图标
             if let iconData = item.sourceAppIcon,
                let nsImage = NSImage(data: iconData) {
                 Image(nsImage: nsImage)
@@ -80,14 +129,12 @@ struct ClipboardCardView: View {
                     .frame(width: 16, height: 16)
             }
 
-            // 时间戳
             Text(item.createdAt.formatted(.relative(presentation: .named)))
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
             Spacer()
 
-            // 内容大小
             Text(contentSize)
                 .font(.caption2)
                 .foregroundColor(.secondary)
@@ -95,7 +142,6 @@ struct ClipboardCardView: View {
         .padding(8)
     }
 
-    // MARK: - Helpers
     private var typeLabel: String {
         switch item.itemType {
         case .text: return "文本"
@@ -115,8 +161,8 @@ struct ClipboardCardView: View {
             }
             return "未知大小"
         case .file:
-            // 尝试获取文件大小
-            let url = URL(fileURLWithPath: item.content)
+            let firstPath = item.content.split(separator: "\n").first.map(String.init) ?? item.content
+            let url = URL(fileURLWithPath: firstPath)
             if let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
                let size = attrs[.size] as? Int64 {
                 return ByteCountFormatter.string(fromByteCount: size, countStyle: .file)

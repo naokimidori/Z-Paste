@@ -10,11 +10,11 @@ extension ClipboardItem: TableRecord {
     enum Columns: String, ColumnExpression {
         case id
         case content
-        case itemType
-        case sourceApp
-        case sourceAppIcon
-        case createdAt
-        case isFavorite
+        case itemType = "item_type"
+        case sourceApp = "source_app"
+        case sourceAppIcon = "source_app_icon"
+        case createdAt = "created_at"
+        case isFavorite = "is_favorite"
         case data
     }
 }

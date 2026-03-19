@@ -1,66 +1,214 @@
 import Foundation
 import AppKit
+import ApplicationServices
+
+extension Notification.Name {
+    static let clipboardItemsDidChange = Notification.Name("clipboardItemsDidChange")
+}
+
+protocol PasteboardWriting: AnyObject {
+    var changeCount: Int { get }
+    func clearContents()
+    @discardableResult func setString(_ string: String, forType type: NSPasteboard.PasteboardType) -> Bool
+    @discardableResult func setData(_ data: Data, forType type: NSPasteboard.PasteboardType) -> Bool
+    @discardableResult func writeObjects(_ objects: [NSPasteboardWriting]) -> Bool
+    func types() -> [NSPasteboard.PasteboardType]
+    func string(forType type: NSPasteboard.PasteboardType) -> String?
+    func data(forType type: NSPasteboard.PasteboardType) -> Data?
+    func propertyList(forType type: NSPasteboard.PasteboardType) -> Any?
+}
+
+protocol AccessibilityTrustChecking {
+    func isTrusted() -> Bool
+}
+
+protocol PasteEventSending {
+    func sendCommandV()
+}
+
+final class SystemPasteboardWriter: PasteboardWriting {
+    private let pasteboard: NSPasteboard
+
+    init(pasteboard: NSPasteboard = .general) {
+        self.pasteboard = pasteboard
+    }
+
+    var changeCount: Int { pasteboard.changeCount }
+
+    func clearContents() {
+        pasteboard.clearContents()
+    }
+
+    @discardableResult
+    func setString(_ string: String, forType type: NSPasteboard.PasteboardType) -> Bool {
+        pasteboard.setString(string, forType: type)
+    }
+
+    @discardableResult
+    func setData(_ data: Data, forType type: NSPasteboard.PasteboardType) -> Bool {
+        pasteboard.setData(data, forType: type)
+    }
+
+    @discardableResult
+    func writeObjects(_ objects: [NSPasteboardWriting]) -> Bool {
+        pasteboard.writeObjects(objects)
+    }
+
+    func types() -> [NSPasteboard.PasteboardType] {
+        pasteboard.types ?? []
+    }
+
+    func string(forType type: NSPasteboard.PasteboardType) -> String? {
+        pasteboard.string(forType: type)
+    }
+
+    func data(forType type: NSPasteboard.PasteboardType) -> Data? {
+        pasteboard.data(forType: type)
+    }
+
+    func propertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
+        pasteboard.propertyList(forType: type)
+    }
+}
+
+struct SystemAccessibilityTrustChecker: AccessibilityTrustChecking {
+    func isTrusted() -> Bool {
+        AXIsProcessTrusted()
+    }
+}
+
+struct SystemPasteEventSender: PasteEventSending {
+    func sendCommandV() {
+        let source = CGEventSource(stateID: .hidSystemState)
+        let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: true)
+        keyDown?.flags = .maskCommand
+        let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: false)
+        keyUp?.flags = .maskCommand
+        keyDown?.post(tap: .cghidEventTap)
+        keyUp?.post(tap: .cghidEventTap)
+    }
+}
 
 /// 剪贴板监听服务
 /// 负责监听系统剪贴板变化，提取内容并保存
 class ClipboardService {
-    /// 数据库服务
     private let database: DatabaseService
-
-    /// 排除服务
     private let exclusionService = ExclusionService()
+    private let pasteboardWriter: PasteboardWriting
+    private let accessibilityChecker: AccessibilityTrustChecking
+    private let pasteEventSender: PasteEventSending
 
-    /// 是否正在监听
     private var isMonitoring: Bool = false
-
-    /// 上次内容的哈希值，用于去重
     private var lastContentHash: String?
-
-    /// 定时检查剪贴板的 Timer
+    private var lastChangeCount: Int?
+    private var pendingSelfWriteChangeCount: Int?
+    private var appIconCache: [String: Data] = [:]
     private var checkTimer: Timer?
 
-    /// 新项回调
     var onNewItem: ((ClipboardItem) -> Void)?
 
-    /// 初始化剪贴板服务
-    /// - Parameter database: 数据库服务实例
-    init(database: DatabaseService) {
+    init(
+        database: DatabaseService,
+        pasteboardWriter: PasteboardWriting = SystemPasteboardWriter(),
+        accessibilityChecker: AccessibilityTrustChecking = SystemAccessibilityTrustChecker(),
+        pasteEventSender: PasteEventSending = SystemPasteEventSender()
+    ) {
         self.database = database
+        self.pasteboardWriter = pasteboardWriter
+        self.accessibilityChecker = accessibilityChecker
+        self.pasteEventSender = pasteEventSender
     }
 
     deinit {
         stopMonitoring()
     }
 
-    // MARK: - Public Methods
-
-    /// 开始监听剪贴板
     func startMonitoring() {
         guard !isMonitoring else { return }
 
         isMonitoring = true
         lastContentHash = nil
-
-        // 使用 Timer 轮询（macOS 命令行环境不支持 NSPasteboard.changedNotification）
+        lastChangeCount = pasteboardWriter.changeCount
         startTimerPolling()
 
         print("ClipboardService: 开始监听剪贴板")
     }
 
-    /// 停止监听剪贴板
     func stopMonitoring() {
         isMonitoring = false
-
-        // 停止 Timer
         checkTimer?.invalidate()
         checkTimer = nil
 
         print("ClipboardService: 停止监听剪贴板")
     }
 
-    // MARK: - Private Methods
+    func writeItemToPasteboard(_ item: ClipboardItem) throws {
+        pasteboardWriter.clearContents()
 
-    /// 启动 Timer 轮询
+        switch item.itemType {
+        case .text:
+            guard pasteboardWriter.setString(item.content, forType: .string) else {
+                throw ClipboardActionError.writeFailed(item.itemType)
+            }
+        case .rtf:
+            guard let data = item.data else {
+                throw ClipboardActionError.missingData(item.itemType)
+            }
+            guard pasteboardWriter.setData(data, forType: .rtf),
+                  pasteboardWriter.setString(item.content, forType: .string) else {
+                throw ClipboardActionError.writeFailed(item.itemType)
+            }
+        case .image:
+            guard let data = item.data else {
+                throw ClipboardActionError.missingData(item.itemType)
+            }
+            if !pasteboardWriter.setData(data, forType: .png) && !pasteboardWriter.setData(data, forType: .tiff) {
+                throw ClipboardActionError.writeFailed(item.itemType)
+            }
+        case .file:
+            let objects = item.content
+                .split(separator: "\n")
+                .map(String.init)
+                .filter { !$0.isEmpty }
+                .map { URL(fileURLWithPath: $0) as NSPasteboardWriting }
+
+            guard !objects.isEmpty, pasteboardWriter.writeObjects(objects) else {
+                throw ClipboardActionError.writeFailed(item.itemType)
+            }
+        }
+
+        markNextMonitorSaveToSkip()
+    }
+
+    func attemptPasteAfterWindowHide() -> PrimaryActionResult {
+        guard accessibilityChecker.isTrusted() else {
+            return .copiedOnly
+        }
+
+        pasteEventSender.sendCommandV()
+        return .pasted
+    }
+
+    func performPrimaryAction(for item: ClipboardItem) -> PrimaryActionResult {
+        do {
+            try writeItemToPasteboard(item)
+            return accessibilityChecker.isTrusted() ? .pasted : .copiedOnly
+        } catch {
+            return .failed(error.localizedDescription)
+        }
+    }
+
+    @discardableResult
+    func consumePendingSelfWriteSuppression(changeCount: Int) -> Bool {
+        guard pendingSelfWriteChangeCount == changeCount else {
+            return false
+        }
+
+        pendingSelfWriteChangeCount = nil
+        lastChangeCount = changeCount
+        return true
+    }
+
     private func startTimerPolling() {
         checkTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             self?.checkClipboard()
@@ -68,11 +216,18 @@ class ClipboardService {
         RunLoop.current.add(checkTimer!, forMode: .common)
     }
 
-    /// 检查剪贴板变化
     private func checkClipboard() {
         guard isMonitoring else { return }
 
-        // 检查是否来自排除的应用
+        let changeCount = pasteboardWriter.changeCount
+        guard lastChangeCount != changeCount else { return }
+
+        if consumePendingSelfWriteSuppression(changeCount: changeCount) {
+            return
+        }
+
+        lastChangeCount = changeCount
+
         if exclusionService.isExcluded() {
             if let bundleID = exclusionService.getCurrentAppBundleID() {
                 print("ClipboardService: 跳过排除应用的剪贴板 - \(bundleID)")
@@ -82,59 +237,50 @@ class ClipboardService {
 
         guard let item = extractContent() else { return }
 
-        // 去重检查
         if let lastHash = lastContentHash, lastHash == item.contentHash {
             return
         }
 
-        // 更新哈希值
         lastContentHash = item.contentHash
 
-        // 保存数据库
         do {
             try database.save(item)
             print("ClipboardService: 保存新记录 - \(item.itemType.rawValue), \(item.content.prefix(50))...")
-
-            // 触发回调
             onNewItem?(item)
+            NotificationCenter.default.post(name: .clipboardItemsDidChange, object: nil)
         } catch {
             print("ClipboardService: 保存失败 - \(error)")
         }
     }
 
-    /// 从剪贴板提取内容
+    private func markNextMonitorSaveToSkip() {
+        pendingSelfWriteChangeCount = pasteboardWriter.changeCount
+    }
+
     private func extractContent() -> ClipboardItem? {
-        let pasteboard = NSPasteboard.general
-        let types = pasteboard.types ?? []
-
-        // 获取来源应用
+        let types = pasteboardWriter.types()
         let sourceApp = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
-        let sourceAppIcon = getSourceAppIcon()
+        let sourceAppIcon = getSourceAppIcon(bundleID: sourceApp)
 
-        // 按优先级判断内容类型
-        if types.contains(.string) {
-            // 文本类型
-            if let string = pasteboard.string(forType: .string) {
-                // 检查是否为 RTF 数据
-                if types.contains(.rtf), let rtfData = pasteboard.data(forType: .rtf) {
-                    return ClipboardItem(
-                        content: string,
-                        itemType: .rtf,
-                        sourceApp: sourceApp,
-                        sourceAppIcon: sourceAppIcon,
-                        data: rtfData
-                    )
-                }
+        if types.contains(.string), let string = pasteboardWriter.string(forType: .string) {
+            if types.contains(.rtf), let rtfData = pasteboardWriter.data(forType: .rtf) {
                 return ClipboardItem(
                     content: string,
-                    itemType: .text,
+                    itemType: .rtf,
                     sourceApp: sourceApp,
-                    sourceAppIcon: sourceAppIcon
+                    sourceAppIcon: sourceAppIcon,
+                    data: rtfData
                 )
             }
+            return ClipboardItem(
+                content: string,
+                itemType: .text,
+                sourceApp: sourceApp,
+                sourceAppIcon: sourceAppIcon
+            )
         }
 
-        if types.contains(.png), let imageData = pasteboard.data(forType: .png) {
+        if types.contains(.png), let imageData = pasteboardWriter.data(forType: .png) {
             return ClipboardItem(
                 content: "Image",
                 itemType: .image,
@@ -144,7 +290,7 @@ class ClipboardService {
             )
         }
 
-        if types.contains(.tiff), let tiffData = pasteboard.data(forType: .tiff) {
+        if types.contains(.tiff), let tiffData = pasteboardWriter.data(forType: .tiff) {
             return ClipboardItem(
                 content: "Image",
                 itemType: .image,
@@ -154,7 +300,7 @@ class ClipboardService {
             )
         }
 
-        if types.contains(.fileURL), let urls = pasteboard.propertyList(forType: .fileURL) as? [String] {
+        if types.contains(.fileURL), let urls = pasteboardWriter.propertyList(forType: .fileURL) as? [String] {
             return ClipboardItem(
                 content: urls.joined(separator: "\n"),
                 itemType: .file,
@@ -166,21 +312,41 @@ class ClipboardService {
         return nil
     }
 
-    /// 获取前台应用图标
-    private func getSourceAppIcon() -> Data? {
+    private func getSourceAppIcon(bundleID: String?) -> Data? {
+        guard let bundleID else {
+            return nil
+        }
+
+        if let cachedIcon = appIconCache[bundleID] {
+            return cachedIcon
+        }
+
         guard let appURL = NSWorkspace.shared.frontmostApplication?.bundleURL else {
             return nil
         }
         let icon = NSWorkspace.shared.icon(forFile: appURL.path)
 
-        // 将图标转换为 Data
         guard let tiffData = icon.tiffRepresentation,
-              let bitmap = NSBitmapImageRep(data: tiffData) else {
+              let bitmap = NSBitmapImageRep(data: tiffData),
+              let pngData = bitmap.representation(using: .png, properties: [:]) else {
             return nil
         }
 
-        // 转换为 PNG 格式以减小存储大小
-        return bitmap.representation(using: .png, properties: [:])
+        appIconCache[bundleID] = pngData
+        return pngData
     }
+}
 
+enum ClipboardActionError: LocalizedError {
+    case writeFailed(ItemType)
+    case missingData(ItemType)
+
+    var errorDescription: String? {
+        switch self {
+        case .writeFailed(let type):
+            return "无法写回 \(type.rawValue) 到系统剪贴板"
+        case .missingData(let type):
+            return "缺少 \(type.rawValue) 所需的二进制数据"
+        }
+    }
 }

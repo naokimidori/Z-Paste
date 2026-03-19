@@ -2,98 +2,73 @@ import XCTest
 @testable import Z_Paste
 
 final class ClipboardServiceTests: XCTestCase {
-    var clipboardService: ClipboardService!
-    var databaseService: DatabaseService!
-    var tempDBPath: String!
+    private var databaseService: DatabaseService!
+    private var tempDBPath: String!
 
-    override func setUp() async throws {
-        try await super.setUp()
-        // 创建临时数据库
+    override func setUpWithError() throws {
         tempDBPath = FileManager.default.temporaryDirectory
             .appendingPathComponent("test_clipboard_\(UUID().uuidString).db")
             .path
         databaseService = try DatabaseService(databasePath: tempDBPath)
-        clipboardService = ClipboardService(database: databaseService)
     }
 
-    override func tearDown() async throws {
-        clipboardService = nil
+    override func tearDownWithError() throws {
         databaseService = nil
-        // 清理临时数据库
-        if let tempDBPath = tempDBPath {
+        if let tempDBPath {
             try? FileManager.default.removeItem(atPath: tempDBPath)
         }
-        try await super.tearDown()
     }
 
-    // Test 1: startMonitoring 后，服务处于监听状态
-    func testStartMonitoring() {
-        clipboardService.startMonitoring()
-        // 验证 Timer 已启动（通过检查服务状态）
-        XCTAssertTrue(clipboardService.isMonitoring)
-    }
+    func testPerformPrimaryActionReturnsFailedForMissingImageData() {
+        let service = ClipboardService(database: databaseService)
+        let item = ClipboardItem(content: "Image", itemType: .image, data: nil)
 
-    // Test 2: stopMonitoring 后，服务停止监听
-    func testStopMonitoring() {
-        clipboardService.startMonitoring()
-        clipboardService.stopMonitoring()
-        XCTAssertFalse(clipboardService.isMonitoring)
-    }
+        let result = service.performPrimaryAction(for: item)
 
-    // Test 3: 添加排除应用
-    func testAddExcludedApp() {
-        let bundleID = "com.apple.finder"
-        clipboardService.addExcludedApp(bundleID)
-        XCTAssertTrue(clipboardService.isAppExcluded(bundleID))
-    }
-
-    // Test 4: 移除排除应用
-    func testRemoveExcludedApp() {
-        let bundleID = "com.apple.finder"
-        clipboardService.addExcludedApp(bundleID)
-        clipboardService.removeExcludedApp(bundleID)
-        XCTAssertFalse(clipboardService.isAppExcluded(bundleID))
-    }
-
-    // Test 5: 新项回调能被触发
-    func testOnNewItemCallback() throws {
-        let expectation = self.expectation(description: "onNewItem callback")
-
-        clipboardService.onNewItem = { item in
-            XCTAssertEqual(item.itemType, .text)
-            expectation.fulfill()
+        guard case .failed = result else {
+            return XCTFail("expected failure result")
         }
-
-        // 模拟剪贴板变化
-        clipboardService.startMonitoring()
-
-        // 等待一段时间让 Timer 触发
-        waitForExpectations(timeout: 2.0)
     }
 
-    // Test 6: 去重逻辑 - 相同内容不触发多次回调
-    func testDeduplication() throws {
-        var callbackCount = 0
+    func testAttemptPasteAfterWindowHideReturnsCopiedOnlyWithoutAccessibilityPermission() {
+        let service = ClipboardService(
+            database: databaseService,
+            pasteboardWriter: ClipboardServiceTestsPasteboard(changeCount: 1),
+            accessibilityChecker: ClipboardServiceTestsAccessibility(isTrusted: false),
+            pasteEventSender: ClipboardServiceTestsEvents()
+        )
 
-        clipboardService.onNewItem = { _ in
-            callbackCount += 1
-        }
-
-        clipboardService.startMonitoring()
-
-        // 等待多次检查周期
-        RunLoop.current.run(until: Date().addingTimeInterval(1.5))
-
-        // 相同内容应该只触发一次
-        XCTAssertEqual(callbackCount, 1, "相同内容应该只触发一次回调")
+        XCTAssertEqual(service.attemptPasteAfterWindowHide(), .copiedOnly)
     }
 }
 
-// MARK: - Test Helper Extension
+private final class ClipboardServiceTestsPasteboard: PasteboardWriting {
+    var changeCount: Int
 
-extension ClipboardService {
-    /// 测试用：获取监听状态
-    var isMonitoring: Bool {
-        return self.isMonitoring
+    init(changeCount: Int) {
+        self.changeCount = changeCount
     }
+
+    func clearContents() {}
+    func setString(_ string: String, forType type: NSPasteboard.PasteboardType) -> Bool { true }
+    func setData(_ data: Data, forType type: NSPasteboard.PasteboardType) -> Bool { true }
+    func writeObjects(_ objects: [NSPasteboardWriting]) -> Bool { true }
+    func types() -> [NSPasteboard.PasteboardType] { [] }
+    func string(forType type: NSPasteboard.PasteboardType) -> String? { nil }
+    func data(forType type: NSPasteboard.PasteboardType) -> Data? { nil }
+    func propertyList(forType type: NSPasteboard.PasteboardType) -> Any? { nil }
+}
+
+private struct ClipboardServiceTestsAccessibility: AccessibilityTrustChecking {
+    let trusted: Bool
+
+    init(isTrusted: Bool) {
+        self.trusted = isTrusted
+    }
+
+    func isTrusted() -> Bool { trusted }
+}
+
+private final class ClipboardServiceTestsEvents: PasteEventSending {
+    func sendCommandV() {}
 }

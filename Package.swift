@@ -22,6 +22,15 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 .product(name: "KeyboardShortcuts", package: "KeyboardShortcuts")
             ],
-            path: "Z-Paste"),
+            path: "Z-Paste",
+            exclude: [
+                "Info.plist",
+                "Z-Paste.entitlements"
+            ]),
+        .testTarget(
+            name: "Z-PasteTests",
+            dependencies: ["Z-Paste"],
+            path: "Tests/Z-PasteTests"
+        ),
     ]
 )

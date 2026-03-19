@@ -1,6 +1,11 @@
 import AppKit
 import SwiftUI
 
+private final class FloatingPanel: NSPanel {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+}
+
 /// 窗口管理服务
 /// 负责 NSPanel 底部弹出窗口的创建、显示、隐藏和动画
 class WindowService {
@@ -12,10 +17,12 @@ class WindowService {
 
     private var panel: NSPanel?
     private var isAnimating = false
-    private var contentView: NSView?
+    private var contentViewController: NSViewController?
 
     /// 窗口高度 - 卡片高度 250 + padding
     private let windowHeight: CGFloat = 280
+    private let horizontalInset: CGFloat = 40
+    private let focusReturnDelay: TimeInterval = 0.08
 
     /// 窗口是否可见
     var isVisible: Bool {
@@ -32,53 +39,41 @@ class WindowService {
     /// - Parameter contentView: 窗口内容视图
     /// - Returns: 配置好的 NSPanel
     @discardableResult
-    func createPanel(with contentView: NSView) -> NSPanel {
-        // 如果已有 panel，先销毁
+    func createPanel(with contentViewController: NSViewController) -> NSPanel {
         if let existingPanel = panel {
             existingPanel.close()
         }
 
-        self.contentView = contentView
+        self.contentViewController = contentViewController
 
-        // 获取屏幕尺寸
         guard let screen = NSScreen.main else {
             fatalError("No main screen available")
         }
         let screenFrame = screen.visibleFrame
 
-        // 创建 NSPanel
-        let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: screenFrame.width, height: windowHeight),
-            styleMask: [.borderless, .nonactivatingPanel],
+        let panel = FloatingPanel(
+            contentRect: NSRect(x: 0, y: 0, width: panelWidth(for: screenFrame), height: windowHeight),
+            styleMask: [.titled, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
 
-        // Panel 属性配置
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.isFloatingPanel = true
-        panel.becomesKeyOnlyIfNeeded = true
+        panel.becomesKeyOnlyIfNeeded = false
         panel.hidesOnDeactivate = false
         panel.acceptsMouseMovedEvents = true
         panel.hasShadow = true
+        panel.titleVisibility = .hidden
+        panel.titlebarAppearsTransparent = true
+        panel.isMovableByWindowBackground = false
+        panel.isReleasedWhenClosed = false
+        panel.backgroundColor = .windowBackgroundColor
+        panel.contentViewController = contentViewController
 
-        // 设置毛玻璃背景
-        let visualEffectView = NSVisualEffectView(frame: NSRect(x: 0, y: 0, width: screenFrame.width, height: windowHeight))
-        visualEffectView.material = .hudWindow
-        visualEffectView.blendingMode = .behindWindow
-        visualEffectView.state = .active
-        visualEffectView.wantsLayer = true
-
-        // 添加内容视图到毛玻璃背景
-        contentView.autoresizingMask = [.width, .height]
-        visualEffectView.addSubview(contentView)
-
-        panel.contentView = visualEffectView
-
-        // 设置初始位置（屏幕底部，隐藏状态）
         let offScreenY = screenFrame.origin.y - windowHeight - 10
-        panel.setFrameOrigin(NSPoint(x: screenFrame.origin.x, y: offScreenY))
+        panel.setFrameOrigin(NSPoint(x: calculateXPosition(), y: offScreenY))
 
         self.panel = panel
 
@@ -91,45 +86,34 @@ class WindowService {
 
         isAnimating = true
 
-        // 激活应用并显示窗口
+        let positions = calculatePositions()
+        let targetOrigin = NSPoint(x: calculateXPosition(), y: positions.onScreen)
+
+        panel.setFrameOrigin(targetOrigin)
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
 
-        // 计算目标位置
-        let positions = calculatePositions()
+        isAnimating = false
+    }
 
-        // 执行滑入动画
-        NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.2
-            context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-            panel.animator().setFrameOrigin(
-                NSPoint(x: calculateXPosition(), y: positions.onScreen)
-            )
-        } completionHandler: { [weak self] in
-            self?.isAnimating = false
+    func hideWindow(completion: (() -> Void)? = nil) {
+        guard let panel = panel, panel.isVisible, !isAnimating else {
+            completion?()
+            return
+        }
+
+        isAnimating = true
+        panel.orderOut(nil)
+        isAnimating = false
+
+        guard let completion else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + focusReturnDelay) {
+            completion()
         }
     }
 
-    /// 隐藏窗口（带动画）
     func hideWindow() {
-        guard let panel = panel, panel.isVisible, !isAnimating else { return }
-
-        isAnimating = true
-
-        // 计算目标位置
-        let positions = calculatePositions()
-
-        // 执行滑出动画
-        NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.2
-            context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-            panel.animator().setFrameOrigin(
-                NSPoint(x: calculateXPosition(), y: positions.offScreen)
-            )
-        } completionHandler: { [weak self] in
-            panel.orderOut(nil)
-            self?.isAnimating = false
-        }
+        hideWindow(completion: nil)
     }
 
     /// 切换窗口显示/隐藏
@@ -149,9 +133,7 @@ class WindowService {
         guard let screen = getCurrentScreen() else { return (0, 0) }
         let screenFrame = screen.visibleFrame
 
-        // 屏幕上位置：屏幕底部（visibleFrame.origin.y 就是屏幕可用区域底部）
         let onScreenY = screenFrame.origin.y
-        // 屏幕外位置：屏幕下方
         let offScreenY = screenFrame.origin.y - windowHeight - 10
 
         return (onScreenY, offScreenY)
@@ -163,23 +145,23 @@ class WindowService {
         guard let screen = getCurrentScreen() else { return 0 }
         let screenFrame = screen.visibleFrame
 
-        // 窗口宽度等于屏幕宽度，X 坐标从屏幕左边开始
-        return screenFrame.origin.x
+        return screenFrame.origin.x + horizontalInset
+    }
+
+    private func panelWidth(for screenFrame: NSRect) -> CGFloat {
+        max(800, screenFrame.width - (horizontalInset * 2))
     }
 
     /// 获取当前显示器（支持多显示器）
     /// 优先获取鼠标所在的显示器，如果没有则返回主显示器
     /// - Returns: 当前显示器
     private func getCurrentScreen() -> NSScreen? {
-        // 获取鼠标位置
         let mouseLocation = NSEvent.mouseLocation
 
-        // 找到包含鼠标位置的显示器
         if let screen = NSScreen.screens.first(where: { $0.frame.contains(mouseLocation) }) {
             return screen
         }
 
-        // 默认返回主显示器
         return NSScreen.main
     }
 }

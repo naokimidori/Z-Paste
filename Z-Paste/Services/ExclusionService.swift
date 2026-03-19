@@ -27,11 +27,11 @@ class ExclusionService {
     /// 排除的应用列表（计算属性，读写 UserDefaults）
     var excludedApps: Set<String> {
         get {
-            let stored = defaults.object(forKey: exclusionKey) as? Set<String> ?? defaultExcludedApps
-            return stored
+            let stored = defaults.stringArray(forKey: exclusionKey) ?? Array(defaultExcludedApps)
+            return Set(stored)
         }
         set {
-            defaults.set(newValue, forKey: exclusionKey)
+            defaults.set(Array(newValue).sorted(), forKey: exclusionKey)
             defaults.synchronize()
         }
     }

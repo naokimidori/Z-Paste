@@ -1,45 +1,71 @@
 import SwiftUI
 
-/// 主窗口视图
-/// 作为窗口的根视图容器，组合 CardListView 并管理窗口关闭回调
 struct MainWindowView: View {
     @StateObject private var viewModel: ClipboardViewModel
+    var onPrimaryActionCompleted: ((PrimaryActionResult) -> Void)?
     var onHide: (() -> Void)?
+    var onContextMenuStateChanged: ((Bool) -> Void)?
 
-    /// 初始化器接收 DatabaseService 依赖
-    init(database: DatabaseService, onHide: (() -> Void)? = nil) {
-        self._viewModel = StateObject(wrappedValue: ClipboardViewModel(database: database))
+    init(
+        database: DatabaseService,
+        primaryActionPerformer: ClipboardPrimaryActionPerforming? = nil,
+        onPrimaryActionCompleted: ((PrimaryActionResult) -> Void)? = nil,
+        onHide: (() -> Void)? = nil,
+        onContextMenuStateChanged: ((Bool) -> Void)? = nil
+    ) {
+        self._viewModel = StateObject(
+            wrappedValue: ClipboardViewModel(
+                database: database,
+                primaryActionPerformer: primaryActionPerformer
+            )
+        )
+        self.onPrimaryActionCompleted = onPrimaryActionCompleted
         self.onHide = onHide
+        self.onContextMenuStateChanged = onContextMenuStateChanged
     }
 
     var body: some View {
-        ZStack {
-            // 背景 - 毛玻璃效果 (WindowService 已处理，这里可透明)
-            Color.clear
-
-            // 内容区域
-            VStack(spacing: 0) {
-                CardListView(
-                    viewModel: viewModel,
-                    onItemCopied: { [weak onHide] in
-                        // 复制后关闭窗口
-                        onHide?()
-                    },
-                    onHide: onHide
-                )
-            }
+        VStack(spacing: 0) {
+            batchToolbar
+            CardListView(
+                viewModel: viewModel,
+                onPrimaryActionCompleted: onPrimaryActionCompleted,
+                onHide: onHide,
+                onContextMenuStateChanged: onContextMenuStateChanged
+            )
         }
-        .frame(minWidth: 800, minHeight: 280)  // 最小窗口尺寸
+        .frame(minWidth: 800, minHeight: 280)
         .onAppear {
-            // 每次显示时重新加载数据
             viewModel.loadItems()
         }
     }
+
+    private var batchToolbar: some View {
+        HStack(spacing: 12) {
+            Button(viewModel.isMultiSelectMode ? "完成" : "批量操作") {
+                viewModel.toggleMultiSelectMode()
+            }
+
+            if viewModel.isMultiSelectMode {
+                Button("批量收藏") {
+                    viewModel.favoriteSelectedItems()
+                }
+                .disabled(viewModel.selectedItemIDs.isEmpty)
+
+                Button("批量删除") {
+                    viewModel.deleteSelectedItems()
+                }
+                .disabled(viewModel.selectedItemIDs.isEmpty)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+    }
 }
 
-// MARK: - Preview
 #Preview {
-    // 预览使用模拟数据
     MainWindowView(database: try! DatabaseService(databasePath: ":memory:"))
-        .frame(width: 1000, height: 280)
+        .frame(width: 1000, height: 320)
 }
