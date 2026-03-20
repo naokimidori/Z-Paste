@@ -24,6 +24,7 @@
 - [x] 01-project-foundation-03 — ClipboardService 和 DatabaseService ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-04 — HotkeyService 全局快捷键 ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-05 — 应用排除逻辑 ✅ (SUMMARY.md 已创建)
+- [x] 01-project-foundation-01-PLAN — Phase 01 聚合执行总结 ✅ (`01-SUMMARY.md` 已创建)
 
 **Phase 2 Plans:**
 - [x] 02-main-interface-01 — WindowService 窗口管理和动画服务 ✅ (SUMMARY.md 已创建)
@@ -34,6 +35,7 @@
 **验证状态：** Phase 1 ✅ passed (4/4 must-haves verified)
 **检查点：** Phase 2 02-04 已获用户手动验证 approved
 **验证报告：** `.planning/phases/01-project-foundation/01-VERIFICATION.md`
+**聚合总结：** `.planning/phases/01-project-foundation/01-SUMMARY.md`
 
 ## 上下文恢复
 
@@ -65,6 +67,10 @@
 - Safe array subscript extension for bounds checking (Phase 2)
 - MainWindowView uses @StateObject ClipboardViewModel and reloads recent history on appear (Phase 2)
 - AppDelegate now composes WindowService, DatabaseService, ClipboardService, and MainWindowView via NSHostingController (Phase 2)
+- 聚合计划 01 以 `01-SUMMARY.md` 汇总确认了 Phase 1 的工程骨架、依赖接入与关键提交映射
 
 ### 下一步
 继续执行 Phase 3 计划：交互功能（粘贴、收藏、删除等）
+
+### 本次执行记录
+- 2026-03-20：补齐 `.planning/phases/01-project-foundation/01-SUMMARY.md`，并验证历史 Task 提交 `d762e39`、`1b0e2d7` 可追溯。

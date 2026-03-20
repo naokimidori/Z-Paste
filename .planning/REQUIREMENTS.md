@@ -74,6 +74,10 @@
 - macOS 13.0+
 - 支持 Intel 和 Apple Silicon
 
+## 计划完成映射
+
+- [x] 1.1: 创建 Xcode 项目和基础目录结构
+
 ## 技术约束
 
 - 纯 Swift/SwiftUI 实现
