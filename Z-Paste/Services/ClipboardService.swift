@@ -105,6 +105,9 @@ class ClipboardService {
     private var appIconCache: [String: Data] = [:]
     private var checkTimer: Timer?
 
+    private static let maxImageBytes = 5 * 1024 * 1024
+    private static let maxThumbnailDimension: CGFloat = 512
+
     var onNewItem: ((ClipboardItem) -> Void)?
 
     init(
@@ -281,23 +284,11 @@ class ClipboardService {
         }
 
         if types.contains(.png), let imageData = pasteboardWriter.data(forType: .png) {
-            return ClipboardItem(
-                content: "Image",
-                itemType: .image,
-                sourceApp: sourceApp,
-                sourceAppIcon: sourceAppIcon,
-                data: imageData
-            )
+            return makeImageItem(from: imageData, sourceApp: sourceApp, sourceAppIcon: sourceAppIcon)
         }
 
         if types.contains(.tiff), let tiffData = pasteboardWriter.data(forType: .tiff) {
-            return ClipboardItem(
-                content: "Image",
-                itemType: .image,
-                sourceApp: sourceApp,
-                sourceAppIcon: sourceAppIcon,
-                data: tiffData
-            )
+            return makeImageItem(from: tiffData, sourceApp: sourceApp, sourceAppIcon: sourceAppIcon)
         }
 
         if types.contains(.fileURL), let urls = pasteboardWriter.propertyList(forType: .fileURL) as? [String] {
@@ -310,6 +301,60 @@ class ClipboardService {
         }
 
         return nil
+    }
+
+    private func makeImageItem(from data: Data, sourceApp: String?, sourceAppIcon: Data?) -> ClipboardItem? {
+        let storedData = imageDataForStorage(data)
+        return ClipboardItem(
+            content: "Image",
+            itemType: .image,
+            sourceApp: sourceApp,
+            sourceAppIcon: sourceAppIcon,
+            data: storedData
+        )
+    }
+
+    private func imageDataForStorage(_ data: Data) -> Data? {
+        guard data.count > ClipboardService.maxImageBytes else {
+            return data
+        }
+
+        guard let image = NSImage(data: data) else {
+            return data
+        }
+
+        guard let thumbnail = makeThumbnail(from: image) else {
+            return data
+        }
+
+        guard let tiffData = thumbnail.tiffRepresentation,
+              let bitmap = NSBitmapImageRep(data: tiffData),
+              let pngData = bitmap.representation(using: .png, properties: [:]) else {
+            return data
+        }
+
+        return pngData
+    }
+
+    private func makeThumbnail(from image: NSImage) -> NSImage? {
+        let originalSize = image.size
+        guard originalSize.width > 0, originalSize.height > 0 else {
+            return nil
+        }
+
+        let maxDimension = ClipboardService.maxThumbnailDimension
+        let scale = min(maxDimension / originalSize.width, maxDimension / originalSize.height, 1)
+        let targetSize = NSSize(width: originalSize.width * scale, height: originalSize.height * scale)
+
+        let thumbnail = NSImage(size: targetSize)
+        thumbnail.lockFocus()
+        defer { thumbnail.unlockFocus() }
+
+        image.draw(in: NSRect(origin: .zero, size: targetSize),
+                   from: NSRect(origin: .zero, size: originalSize),
+                   operation: .copy,
+                   fraction: 1)
+        return thumbnail
     }
 
     private func getSourceAppIcon(bundleID: String?) -> Data? {
