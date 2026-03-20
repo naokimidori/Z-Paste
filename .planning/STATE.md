@@ -24,6 +24,7 @@
 - [x] 01-project-foundation-03 — ClipboardService 和 DatabaseService ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-04 — HotkeyService 全局快捷键 ✅ (SUMMARY.md 已创建)
 - [x] 01-project-foundation-05 — 应用排除逻辑 ✅ (SUMMARY.md 已创建)
+- [x] 01-project-foundation-06 — 恢复 SwiftUI @main 入口并桥接 AppDelegate ✅ (`01-06-SUMMARY.md` 已创建)
 - [x] 01-project-foundation-01-PLAN — Phase 01 聚合执行总结 ✅ (`01-SUMMARY.md` 已创建)
 
 **Phase 2 Plans:**
@@ -68,9 +69,12 @@
 - MainWindowView uses @StateObject ClipboardViewModel and reloads recent history on appear (Phase 2)
 - AppDelegate now composes WindowService, DatabaseService, ClipboardService, and MainWindowView via NSHostingController (Phase 2)
 - 聚合计划 01 以 `01-SUMMARY.md` 汇总确认了 Phase 1 的工程骨架、依赖接入与关键提交映射
+- 使用 SwiftUI `@main` 作为唯一应用入口，并通过 `@NSApplicationDelegateAdaptor` 桥接现有 AppDelegate（Phase 1 gap closure）
+- 保留 `main.swift` 作为迁移说明文件，但从 Xcode Sources 中移除以避免双入口冲突
 
 ### 下一步
 继续执行 Phase 3 计划：交互功能（粘贴、收藏、删除等）
 
 ### 本次执行记录
 - 2026-03-20：补齐 `.planning/phases/01-project-foundation/01-SUMMARY.md`，并验证历史 Task 提交 `d762e39`、`1b0e2d7` 可追溯。
+- 2026-03-20：执行 `01-06-PLAN`，新增 `Z_PasteApp.swift`，移除 `main.swift` 的 Sources 编译入口，并以 `xcodebuild` 验证 `BUILD SUCCEEDED`。
