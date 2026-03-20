@@ -33,6 +33,7 @@
 		6A0000000000000000000217 /* ClipboardViewModelInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0000000000000000000117 /* ClipboardViewModelInteractionTests.swift */; };
 		6A0000000000000000000218 /* ClipboardViewModelBatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0000000000000000000118 /* ClipboardViewModelBatchTests.swift */; };
 		6A0000000000000000000219 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6A0000000000000000000604 /* GRDB */; };
+		6A000000000000000000021A /* Z_PasteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0000000000000000000119 /* Z_PasteApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +74,7 @@
 		6A0000000000000000000116 /* DatabaseServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseServiceTests.swift; sourceTree = "<group>"; };
 		6A0000000000000000000117 /* ClipboardViewModelInteractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardViewModelInteractionTests.swift; sourceTree = "<group>"; };
 		6A0000000000000000000118 /* ClipboardViewModelBatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardViewModelBatchTests.swift; sourceTree = "<group>"; };
+		6A0000000000000000000119 /* Z_PasteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z_PasteApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 		6A0000000000000000000011 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				6A0000000000000000000119 /* Z_PasteApp.swift */,
 				6A0000000000000000000100 /* main.swift */,
 				6A0000000000000000000101 /* AppDelegate.swift */,
 			);
@@ -334,6 +337,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A000000000000000000021A /* Z_PasteApp.swift in Sources */,
 				6A0000000000000000000201 /* AppDelegate.swift in Sources */,
 				6A0000000000000000000207 /* ExclusionService.swift in Sources */,
 				6A000000000000000000020B /* ClipboardCardView.swift in Sources */,
@@ -347,7 +351,6 @@
 				6A0000000000000000000210 /* ImagePreview.swift in Sources */,
 				6A000000000000000000020C /* CardListView.swift in Sources */,
 				6A000000000000000000020D /* MainWindowView.swift in Sources */,
-				6A0000000000000000000200 /* main.swift in Sources */,
 				6A000000000000000000020F /* TextPreview.swift in Sources */,
 				6A0000000000000000000209 /* ClipboardViewModel.swift in Sources */,
 				6A0000000000000000000208 /* WindowService.swift in Sources */,

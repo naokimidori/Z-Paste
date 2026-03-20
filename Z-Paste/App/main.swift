@@ -1,11 +1,2 @@
-import AppKit
-
-// 创建应用实例
-let app = NSApplication.shared
-
-// 设置代理
-let delegate = AppDelegate()
-app.delegate = delegate
-
-// 启动应用
-app.run()
+// Legacy manual entry point replaced by SwiftUI @main in Z_PasteApp.swift.
+// This file is intentionally kept as documentation and is no longer compiled.
