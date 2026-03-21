@@ -8,6 +8,8 @@ struct CardListView: View {
     var onContextMenuStateChanged: ((Bool) -> Void)?
 
     var body: some View {
+        let isKeyboardNavigationEnabled = !viewModel.isSearchFieldFocused
+
         Group {
             if viewModel.isEmpty {
                 emptyStateView
@@ -20,6 +22,7 @@ struct CardListView: View {
         }
         .background(
             KeyEventHandlingView(
+                isKeyboardNavigationEnabled: isKeyboardNavigationEnabled,
                 onLeftArrow: { viewModel.selectPrevious() },
                 onRightArrow: { viewModel.selectNext() },
                 onReturn: {
@@ -109,6 +112,7 @@ struct CardListView: View {
 }
 
 private struct KeyEventHandlingView: NSViewRepresentable {
+    let isKeyboardNavigationEnabled: Bool
     let onLeftArrow: () -> Void
     let onRightArrow: () -> Void
     let onReturn: () -> Void
@@ -120,8 +124,11 @@ private struct KeyEventHandlingView: NSViewRepresentable {
         view.onRightArrow = onRightArrow
         view.onReturn = onReturn
         view.onEscape = onEscape
+        view.isKeyboardNavigationEnabled = isKeyboardNavigationEnabled
         DispatchQueue.main.async {
-            view.window?.makeFirstResponder(view)
+            if isKeyboardNavigationEnabled {
+                view.window?.makeFirstResponder(view)
+            }
         }
         return view
     }
@@ -131,8 +138,11 @@ private struct KeyEventHandlingView: NSViewRepresentable {
         nsView.onRightArrow = onRightArrow
         nsView.onReturn = onReturn
         nsView.onEscape = onEscape
+        nsView.isKeyboardNavigationEnabled = isKeyboardNavigationEnabled
         DispatchQueue.main.async {
-            nsView.window?.makeFirstResponder(nsView)
+            if isKeyboardNavigationEnabled {
+                nsView.window?.makeFirstResponder(nsView)
+            }
         }
     }
 }
@@ -142,10 +152,16 @@ private final class KeyCaptureView: NSView {
     var onRightArrow: (() -> Void)?
     var onReturn: (() -> Void)?
     var onEscape: (() -> Void)?
+    var isKeyboardNavigationEnabled: Bool = true
 
     override var acceptsFirstResponder: Bool { true }
 
     override func keyDown(with event: NSEvent) {
+        guard isKeyboardNavigationEnabled else {
+            super.keyDown(with: event)
+            return
+        }
+
         switch event.keyCode {
         case 123:
             onLeftArrow?()

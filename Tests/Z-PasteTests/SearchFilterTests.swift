@@ -83,6 +83,20 @@ final class SearchFilterTests: XCTestCase {
         XCTAssertEqual(viewModel.searchQuery, "")
     }
 
+    func testSearchFocusStateDoesNotChangeQueryOrFilter() {
+        let viewModel = ClipboardViewModel(database: databaseService)
+        viewModel.searchQuery = "swift"
+        viewModel.activeFilter = .favorites
+
+        viewModel.isSearchFieldFocused = true
+        XCTAssertEqual(viewModel.searchQuery, "swift")
+        XCTAssertEqual(viewModel.activeFilter, .favorites)
+
+        viewModel.isSearchFieldFocused = false
+        XCTAssertEqual(viewModel.searchQuery, "swift")
+        XCTAssertEqual(viewModel.activeFilter, .favorites)
+    }
+
     func testFavoritesFilterMatchesOnlyFavorites() {
         let items = sampleItems()
         let results = items.filter {
