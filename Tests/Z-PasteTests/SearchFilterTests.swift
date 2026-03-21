@@ -66,6 +66,23 @@ final class SearchFilterTests: XCTestCase {
         XCTAssertTrue(viewModel.isSearchFieldFocused)
     }
 
+    func testActiveFilterOverridesPreviousSelection() {
+        let viewModel = ClipboardViewModel(database: databaseService)
+        viewModel.setActiveFilter(.favorites)
+        viewModel.setActiveFilter(.links)
+
+        XCTAssertEqual(viewModel.activeFilter, .links)
+    }
+
+    func testClearSearchQueryResetsQuery() {
+        let viewModel = ClipboardViewModel(database: databaseService)
+        viewModel.searchQuery = "swift"
+
+        viewModel.clearSearchQuery()
+
+        XCTAssertEqual(viewModel.searchQuery, "")
+    }
+
     func testFavoritesFilterMatchesOnlyFavorites() {
         let items = sampleItems()
         let results = items.filter {

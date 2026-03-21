@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainWindowView: View {
     @StateObject private var viewModel: ClipboardViewModel
+    @FocusState private var isSearchFieldFocused: Bool
     var onPrimaryActionCompleted: ((PrimaryActionResult) -> Void)?
     var onHide: (() -> Void)?
     var onContextMenuStateChanged: ((Bool) -> Void)?
@@ -26,7 +27,7 @@ struct MainWindowView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            batchToolbar
+            searchableToolbar
             CardListView(
                 viewModel: viewModel,
                 onPrimaryActionCompleted: onPrimaryActionCompleted,
@@ -38,30 +39,76 @@ struct MainWindowView: View {
         .onAppear {
             viewModel.loadItems()
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
+            viewModel.prepareForPresentation()
+        }
+        .onChange(of: isSearchFieldFocused) { newValue in
+            if viewModel.isSearchFieldFocused != newValue {
+                viewModel.isSearchFieldFocused = newValue
+            }
+        }
+        .onChange(of: viewModel.isSearchFieldFocused) { newValue in
+            if isSearchFieldFocused != newValue {
+                isSearchFieldFocused = newValue
+            }
+        }
     }
 
-    private var batchToolbar: some View {
-        HStack(spacing: 12) {
-            Button(viewModel.isMultiSelectMode ? "完成" : "批量操作") {
-                viewModel.toggleMultiSelectMode()
-            }
+    private var searchableToolbar: some View {
+        HStack(spacing: 16) {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.secondary)
+                TextField("Search clipboard history", text: Binding(
+                    get: { viewModel.searchQuery },
+                    set: { viewModel.setSearchQuery($0) }
+                ))
+                .focused($isSearchFieldFocused)
+                .frame(minHeight: 28)
+                .frame(minWidth: 240)
 
-            if viewModel.isMultiSelectMode {
-                Button("批量收藏") {
-                    viewModel.favoriteSelectedItems()
+                if !viewModel.searchQuery.isEmpty {
+                    Button {
+                        viewModel.clearSearchQuery()
+                        viewModel.isSearchFieldFocused = true
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Clear search")
                 }
-                .disabled(viewModel.selectedItemIDs.isEmpty)
-
-                Button("批量删除") {
-                    viewModel.deleteSelectedItems()
-                }
-                .disabled(viewModel.selectedItemIDs.isEmpty)
             }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isSearchFieldFocused ? Color.accentColor : Color.secondary.opacity(0.2), lineWidth: 1)
+            )
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-            Spacer()
+            HStack(spacing: 8) {
+                ForEach(ClipboardSearchFilter.allCases, id: \.self) { filter in
+                    Button(filter.title) {
+                        viewModel.setActiveFilter(filter)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 8)
+                    .frame(height: 28)
+                    .background(viewModel.activeFilter == filter ? Color.accentColor.opacity(0.2) : Color.secondary.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+
+                Button(viewModel.isMultiSelectMode ? "完成" : "批量操作") {
+                    viewModel.toggleMultiSelectMode()
+                }
+            }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 12)
+        .padding(.top, 16)
+        .padding(.bottom, 8)
     }
 }
 
