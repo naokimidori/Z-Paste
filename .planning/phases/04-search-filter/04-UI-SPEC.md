@@ -1,10 +1,11 @@
 ---
 phase: 4
 slug: 04-search-filter
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-03-21
+reviewed_at: 2026-03-21T00:00:00+08:00
 ---
 
 # Phase 4 — UI Design Contract
@@ -35,11 +36,11 @@ Declared values (must be multiples of 4):
 |-------|-------|-------|
 | xs | 4px | Inline icon gap, compact badge spacing |
 | sm | 8px | Search field internal gaps, chip internal padding, inline control spacing |
-| md | 12px | Card row spacing, toolbar item gap, vertical stack gap |
-| lg | 16px | Horizontal container padding, card list horizontal padding |
-| xl | 24px | Search bar to content separation, major internal layout offset |
-| 2xl | 32px | Reserved for future expanded empty states |
-| 3xl | 48px | Reserved for future full-width empty/error compositions |
+| md | 16px | Card row spacing, toolbar item gap, vertical stack gap |
+| lg | 24px | Horizontal container padding, card list horizontal padding |
+| xl | 32px | Search bar to content separation, major internal layout offset |
+| 2xl | 48px | Reserved for future expanded empty states |
+| 3xl | 64px | Reserved for future full-width empty/error compositions |
 
 Exceptions: Card size remains 250px × 250px from Phase 2; search field minimum hit area is 28px height for macOS density; filter chips use 28px height; panel top bar uses 36px visual row height.
 
@@ -48,14 +49,14 @@ Exceptions: Card size remains 250px × 250px from Phase 2; search field minimum 
 | Element | Value | Notes |
 |---------|-------|-------|
 | Top bar horizontal padding | 16px | Align with card list container |
-| Top bar top padding | 12px | Preserve existing window breathing room |
+| Top bar top padding | 16px | Preserve existing window breathing room |
 | Top bar bottom padding | 8px | Tight separation before card region |
-| Search ↔ filter group gap | 12px | Single-row left-search right-filter layout |
+| Search ↔ filter group gap | 16px | Single-row left-search right-filter layout |
 | Filter chip gap | 8px | Mutual-exclusive chips remain scannable |
-| Search field internal horizontal padding | 10px | Leading icon + text input spacing |
-| Search field internal vertical padding | 6px | Supports 28px control height |
+| Search field internal horizontal padding | 8px | Leading icon + text input spacing |
+| Search field internal vertical padding | 8px | Supports 28px control height |
 | No-results state vertical stack gap | 8px | More compact than empty-history state |
-| Clear-search action top gap | 12px | Primary recovery action separation |
+| Clear-search action top gap | 16px | Primary recovery action separation |
 
 ### Pre-populated From Upstream
 
@@ -63,7 +64,7 @@ Exceptions: Card size remains 250px × 250px from Phase 2; search field minimum 
 |-----------|-------|--------|
 | Keep single-window card list | yes | 04-CONTEXT.md |
 | Single-row top bar | search left, filters right | 04-CONTEXT.md |
-| Existing list spacing baseline | 12px card gap, 16px horizontal padding | 02-UI-SPEC.md + current CardListView.swift |
+| Existing list spacing baseline | 16px card gap, 16px horizontal padding | 02-UI-SPEC.md + current CardListView.swift |
 | Toolbar horizontal padding baseline | 16px | current MainWindowView.swift |
 
 ---
@@ -131,6 +132,14 @@ Accent reserved for: active filter chip state, search field keyboard focus ring,
 | Glass/material styling | yes | 02-UI-SPEC.md |
 | Accent usage baseline | selection and focus only | 02-UI-SPEC.md |
 | Local-only app, no network cues | yes | REQUIREMENTS.md NFR-2 |
+
+---
+
+## Visual Hierarchy
+
+- Primary focus: search field (largest visual weight and first-focus on open).
+- Secondary focus: active filter chip state (accent emphasis only on selected chip).
+- Tertiary focus: card list results (selection border only on the current card; all other cards remain neutral).
 
 ---
 
@@ -204,7 +213,7 @@ Accent reserved for: active filter chip state, search field keyboard focus ring,
 | Position | Top of panel, above horizontal card list |
 | Layout | Single row: search input left, filter chips right |
 | Height | 36px visual row, compact utility toolbar density |
-| Padding | 16px horizontal, 12px top, 8px bottom |
+| Padding | 16px horizontal, 16px top, 8px bottom |
 | Overflow handling | Chips remain visible in one row; if width is constrained, search field shrinks first down to minimum 240px before chip wrapping is considered unacceptable |
 | Mode interaction | Replaces Phase 3 batch toolbar during normal Phase 4 search flow unless batch mode remains explicitly in scope elsewhere |
 
@@ -231,7 +240,7 @@ Accent reserved for: active filter chip state, search field keyboard focus ring,
 | Selection model | Mutual-exclusive, single active chip only |
 | Default chip | All |
 | Height | 28px |
-| Horizontal padding | 10px |
+| Horizontal padding | 8px |
 | Corner radius | 14px |
 | Active state | Accent fill or accent stroke with clear selected contrast |
 | Inactive state | Secondary material surface |
