@@ -12,6 +12,7 @@
 		6A0000000000000000000202 /* ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0000000000000000000102 /* ClipboardItem.swift */; };
 		6A0000000000000000000203 /* ClipboardItem+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0000000000000000000103 /* ClipboardItem+Database.swift */; };
 		6A0000000000000000000204 /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0000000000000000000104 /* ClipboardService.swift */; };
+		6A000000000000000000021B /* ClipboardSearchFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A000000000000000000011A /* ClipboardSearchFilter.swift */; };
 		6A0000000000000000000205 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0000000000000000000105 /* DatabaseService.swift */; };
 		6A0000000000000000000206 /* HotkeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0000000000000000000106 /* HotkeyService.swift */; };
 		6A0000000000000000000207 /* ExclusionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0000000000000000000107 /* ExclusionService.swift */; };
@@ -60,6 +61,7 @@
 		6A0000000000000000000108 /* WindowService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowService.swift; sourceTree = "<group>"; };
 		6A0000000000000000000109 /* ClipboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardViewModel.swift; sourceTree = "<group>"; };
 		6A000000000000000000010A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6A000000000000000000011A /* ClipboardSearchFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardSearchFilter.swift; sourceTree = "<group>"; };
 		6A000000000000000000010B /* ClipboardCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardCardView.swift; sourceTree = "<group>"; };
 		6A000000000000000000010C /* CardListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardListView.swift; sourceTree = "<group>"; };
 		6A000000000000000000010D /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
@@ -133,7 +135,6 @@
 			isa = PBXGroup;
 			children = (
 				6A0000000000000000000119 /* Z_PasteApp.swift */,
-				6A0000000000000000000100 /* main.swift */,
 				6A0000000000000000000101 /* AppDelegate.swift */,
 			);
 			path = App;
@@ -144,6 +145,7 @@
 			children = (
 				6A0000000000000000000102 /* ClipboardItem.swift */,
 				6A0000000000000000000103 /* ClipboardItem+Database.swift */,
+				6A000000000000000000011A /* ClipboardSearchFilter.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -343,6 +345,7 @@
 				6A000000000000000000020B /* ClipboardCardView.swift in Sources */,
 				6A0000000000000000000202 /* ClipboardItem.swift in Sources */,
 				6A0000000000000000000203 /* ClipboardItem+Database.swift in Sources */,
+				6A000000000000000000021B /* ClipboardSearchFilter.swift in Sources */,
 				6A0000000000000000000204 /* ClipboardService.swift in Sources */,
 				6A000000000000000000020A /* ContentView.swift in Sources */,
 				6A0000000000000000000205 /* DatabaseService.swift in Sources */,

@@ -1,6 +1,8 @@
 import Foundation
 import GRDB
 
+// Search filter model is defined in Models/ClipboardSearchFilter.swift
+
 /// 剪贴板数据库服务
 /// 负责剪贴板记录的持久化存储和检索
 class DatabaseService {
@@ -49,6 +51,19 @@ class DatabaseService {
                 .order(Column("created_at").desc)
                 .limit(limit)
                 .fetchAll(db)
+        }
+    }
+
+    /// 获取匹配查询与筛选条件的剪贴板记录
+    /// - Parameters:
+    ///   - query: 搜索关键词
+    ///   - filter: 互斥筛选条件
+    ///   - limit: 返回数量限制
+    /// - Returns: 匹配的剪贴板项数组，保持创建时间倒序
+    func fetchMatchingItems(query: String, filter: ClipboardSearchFilter, limit: Int = 100) throws -> [ClipboardItem] {
+        let recentItems = try fetchRecent(limit: limit)
+        return recentItems.filter { item in
+            filter.matches(item: item, query: query)
         }
     }
 

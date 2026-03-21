@@ -23,6 +23,10 @@ class ClipboardViewModel: ObservableObject {
     @Published var lastPrimaryActionResult: PrimaryActionResult?
     @Published var isMultiSelectMode: Bool = false
     @Published var selectedItemIDs: Set<Int64> = []
+    @Published var searchQuery: String = ""
+    @Published var activeFilter: ClipboardSearchFilter = .all
+    @Published var hasClipboardHistory: Bool = false
+    @Published var isSearchFieldFocused: Bool = false
 
     private let database: DatabaseService
     private let primaryActionPerformer: ClipboardPrimaryActionPerforming
@@ -37,6 +41,10 @@ class ClipboardViewModel: ObservableObject {
 
     var isEmpty: Bool {
         items.isEmpty
+    }
+
+    var isFilteredEmpty: Bool {
+        hasClipboardHistory && items.isEmpty
     }
 
     init(database: DatabaseService, primaryActionPerformer: ClipboardPrimaryActionPerforming? = nil) {
@@ -58,13 +66,42 @@ class ClipboardViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            items = try database.fetchRecent(limit: 100)
-            selectedIndex = items.isEmpty ? -1 : 0
+            let allItems = try database.fetchRecent(limit: 100)
+            hasClipboardHistory = !allItems.isEmpty
+            items = try database.fetchMatchingItems(query: searchQuery, filter: activeFilter, limit: 100)
+
+            if items.isEmpty {
+                selectedIndex = -1
+            } else if selectedIndex < 0 || selectedIndex >= items.count {
+                selectedIndex = 0
+            }
         } catch {
             errorMessage = "无法加载剪贴板历史: \(error.localizedDescription)"
         }
 
         isLoading = false
+    }
+
+    func setSearchQuery(_ value: String) {
+        searchQuery = value
+        loadItems()
+    }
+
+    func setActiveFilter(_ filter: ClipboardSearchFilter) {
+        activeFilter = filter
+        loadItems()
+    }
+
+    func clearSearchQuery() {
+        searchQuery = ""
+        loadItems()
+    }
+
+    func prepareForPresentation() {
+        searchQuery = ""
+        activeFilter = .all
+        isSearchFieldFocused = true
+        loadItems()
     }
 
     func selectNext() {

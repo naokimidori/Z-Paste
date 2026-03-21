@@ -77,6 +77,25 @@ final class SearchFilterTests: XCTestCase {
         ])
     }
 
+    func testViewModelLoadItemsCombinesQueryAndFilter() throws {
+        try databaseService.save(ClipboardItem(content: "Swift clipboard notes", itemType: .text, isFavorite: true, createdAt: Date(timeIntervalSince1970: 10)))
+        try databaseService.save(ClipboardItem(content: "Rich Swift snippet", itemType: .rtf, createdAt: Date(timeIntervalSince1970: 20)))
+        try databaseService.save(ClipboardItem(content: "https://example.com/docs", itemType: .text, createdAt: Date(timeIntervalSince1970: 30)))
+        try databaseService.save(ClipboardItem(content: "not a link value", itemType: .text, createdAt: Date(timeIntervalSince1970: 40)))
+        try databaseService.save(ClipboardItem(content: "/tmp/SwiftGuide.pdf", itemType: .file, createdAt: Date(timeIntervalSince1970: 50)))
+        try databaseService.save(ClipboardItem(content: "image-placeholder", itemType: .image, createdAt: Date(timeIntervalSince1970: 60)))
+
+        let viewModel = ClipboardViewModel(database: databaseService)
+        viewModel.setSearchQuery("swift")
+        viewModel.setActiveFilter(.all)
+
+        XCTAssertEqual(viewModel.items.map(\.content), [
+            "/tmp/SwiftGuide.pdf",
+            "Rich Swift snippet",
+            "Swift clipboard notes"
+        ])
+    }
+
     private func sampleItems() -> [ClipboardItem] {
         [
             ClipboardItem(content: "Swift clipboard notes", itemType: .text, isFavorite: true),
